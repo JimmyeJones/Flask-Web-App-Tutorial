@@ -9,17 +9,22 @@ def get_db_connection():
 
 # Streamlit app
 def main():
-    st.title("SQLite with Streamlit")
+    # Initialize the database and table
+    initialize_db()
 
-    # Display existing data
+    # Connect to the database
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users")
-    rows = cursor.fetchall()
 
-    st.subheader("Current Data")
-    for row in rows:
-        st.write(dict(row))
+    # Try to fetch data from the `users` table
+    try:
+        cursor.execute("SELECT * FROM users")
+        rows = cursor.fetchall()
+        st.subheader("Current Data")
+        for row in rows:
+            st.write(row)
+    except sqlite3.OperationalError as e:
+        st.error(f"Database error: {e}")
 
     # Add new data
     st.subheader("Add New User")
