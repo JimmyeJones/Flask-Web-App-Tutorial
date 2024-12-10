@@ -25,22 +25,22 @@ def get_db_connection():
 
 # Streamlit app
 def main():
-    # Initialize the database and table
+    # Initialize the database
     initialize_db()
 
     # Connect to the database
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Try to fetch data from the `users` table
-    try:
-        cursor.execute("SELECT * FROM users")
-        rows = cursor.fetchall()
-        st.subheader("Current Data")
-        for row in rows:
-            st.write(row)
-    except sqlite3.OperationalError as e:
-        st.error(f"Database error: {e}")
+    # Fetch data from the users table
+    cursor.execute("SELECT * FROM users")
+    rows = cursor.fetchall()
+
+    # Convert sqlite3.Row to dictionary for display
+    st.subheader("Current Data")
+    formatted_rows = [dict(row) for row in rows]  # Convert each row to a dictionary
+    for row in formatted_rows:
+        st.write(row)
 
     # Add new data
     st.subheader("Add New User")
@@ -51,11 +51,12 @@ def main():
             cursor.execute("INSERT INTO users (name, age) VALUES (?, ?)", (name, age))
             conn.commit()
             st.success("User added successfully!")
-            st.experimental_rerun()
+            st.experimental_rerun()  # Optional: Only if supported
         else:
             st.error("Please provide valid inputs.")
 
     conn.close()
+
 
 if __name__ == "__main__":
     main()
