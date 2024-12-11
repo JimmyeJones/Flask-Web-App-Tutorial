@@ -51,7 +51,7 @@ def main():
             cursor.execute("INSERT INTO users (name, age) VALUES (?, ?)", (name, age))
             conn.commit()
             st.success("User added successfully!")
-            st.experimental_rerun()  # Optional: Only if supported
+            st.rerun()  # Optional: Only if supported
         else:
             st.error("Please provide valid inputs.")
 
